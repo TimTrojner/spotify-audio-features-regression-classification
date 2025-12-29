@@ -1,0 +1,19 @@
+Pozdravljeni,
+
+S sošolcem sva pripravila ožji izbor treh potencialnih podatkovnih zbirk za seminarsko nalogo pri predmetu Vitko upravljenje pri inženirstvu.
+Prosimo vas, da pregledate predloge in nama sporočite, katera podatkovna zbirka bi bila najbolj primerna.
+
+2. MOŽNOST: Glasbena industrija (Spotify Analysis)
+Povezava: https://www.kaggle.com/datasets/abdullahmeo/spotify-analysis-and-visualization
+Število stolpcev: 16
+A. Regresijski problem (Popularnost)
+Cilj (Y): popularity(Indeks popularnosti od 0 do 100).
+Vhodni podatki (X): Tehnične lastnosti skladbe (danceability, energy, loudness, tempo, itd.).
+Optimizacija (Simulacija): Produkcija uspešnice. Iskanje optimalnih zvočnih parametrov za maksimizacijo napovedane popularnosti.
+B. Klasifikacijski problem (Uspešnica)
+Cilj (Y): Is_Hit(Nova binarna spremenljivka: Hit vs. Ne-Hit).
+Optimizacija (Simulacija): Napoved verjetnosti uspeha. Določanje mejnih vrednosti za ključne parametre (npr. minimalna danceability), da verjetnost uspeha preseže 90 %.
+
+Lep pozdrav,
+Tim Trojner Hlade
+Simon Plazar
