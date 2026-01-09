@@ -29,7 +29,7 @@ Nalogo oddate v roku v spletno učilnico
 
 • Po potrebi izvedite nadomeščanje manjkajočih vrednosti in utemeljite postopek.
 
-• Jasno utemeljite vse sprejete odločitve.
+• Jasno utemeljite vse sprejete odločitve. // TODO preveri!!!
 
 **1.3 Deskriptivna statistika z grafi**
 
