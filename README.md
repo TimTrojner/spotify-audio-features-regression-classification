@@ -1,5 +1,13 @@
 # spotify-audio-features-regression-classification
 
+---
+
+### Dataset link
+https://www.kaggle.com/datasets/maharshipandya/-spotify-tracks-dataset/data
+
+
+### Dataset usage example
+https://www.kaggle.com/code/dishaasher/spotify-tracks-exploratory-analysis
 
 ---
 
@@ -41,11 +49,3 @@ The dataset can be used for:
 * **tempo:** The overall estimated tempo of a track in beats per minute (BPM). In musical terminology, tempo is the speed or pace of a given piece and derives directly from the average beat duration.
 * **time_signature:** An estimated time signature. The time signature (meter) is a notational convention to specify how many beats are in each bar (or measure). The time signature ranges from 3 to 7 indicating time signatures of 3/4, to 7/4.
 * **track_genre:** The genre in which the track belongs.
-
----
-### Dataset link
-https://www.kaggle.com/datasets/maharshipandya/-spotify-tracks-dataset/data
-
-
-### Dataset usage example
-https://www.kaggle.com/code/dishaasher/spotify-tracks-exploratory-analysis
