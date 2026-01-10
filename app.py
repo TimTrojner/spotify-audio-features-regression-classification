@@ -13,11 +13,11 @@ st.markdown("Aplikacija za napovedovanje in simulacijo uspešnosti glasbenih del
 # Naložimo modele in skaler (poskrbi, da so datoteke v isti mapi!)
 @st.cache_resource
 def load_assets():
-    scaler = joblib.load('scaler.joblib')
+    scaler = joblib.load('./klasifikacija/modeli/scaler.joblib')
     # Če nimaš vseh datotek še shranjenih, bo tukaj javilo napako
-    m_xgb = joblib.load('model_xgb.joblib')
-    m_rf = joblib.load('model_rf.joblib')
-    m_knn = joblib.load('model_knn.joblib')
+    m_xgb = joblib.load('./klasifikacija/modeli/model_xgb.joblib')
+    m_rf = joblib.load('./klasifikacija/modeli/model_rf.joblib')
+    m_knn = joblib.load('./klasifikacija/modeli/model_knn.joblib')
     return scaler, m_xgb, m_rf, m_knn
 
 try:

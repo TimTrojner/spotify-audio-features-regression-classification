@@ -4,6 +4,7 @@
 *.zip
 *.wav
 *.csv
+*.joblib
 *.m4a
 **/datasets/*
 *_pycache_*
