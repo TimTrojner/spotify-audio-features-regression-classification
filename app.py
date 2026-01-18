@@ -11,12 +11,11 @@ st.title("🎵 Spotify Hit Predictor & Optimizer")
 st.markdown("Aplikacija za napovedovanje in simulacijo uspešnosti glasbenih del.")
 
 # Definiraj stolpce za vsak model
-CLASSIFICATION_FEATURES = ['valence', 'loudness', 'acousticness', 'speechiness',
-                           'popularity', 'instrumentalness', 'liveness']
+CLASSIFICATION_FEATURES = ['valence', 'energy', 'loudness', 'speechiness',
+                           'acousticness', 'instrumentalness', 'liveness', 'tempo', 'popularity']
 
-REGRESSION_BASE_FEATURES = ['duration_ms', 'danceability', 'energy', 'loudness',
-                            'speechiness', 'acousticness', 'instrumentalness',
-                            'liveness', 'tempo']
+REGRESSION_BASE_FEATURES = ['duration_ms', 'danceability', 'energy', 'loudness', 'speechiness',
+                            'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo']
 
 # Možne vrednosti za kategorične spremenljivke (prilagodi glede na tvoje podatke)
 TRACK_GENRES = ['acoustic', 'afrobeat', 'alt-rock', 'alternative', 'ambient', 'anime', 'black-metal',
@@ -149,12 +148,14 @@ if input_mode == "Posamezen vzorec (drsniki)":
 
     if model_type == 'classification':
         input_values['valence'] = st.sidebar.slider("Valence", 0.0, 1.0, 0.5)
+        input_values['energy'] = st.sidebar.slider("Energy", 0.0, 1.0, 0.7)
         input_values['loudness'] = st.sidebar.slider("Loudness", -60.0, 0.0, -8.0)
-        input_values['acousticness'] = st.sidebar.slider("Acousticness", 0.0, 1.0, 0.2)
         input_values['speechiness'] = st.sidebar.slider("Speechiness", 0.0, 1.0, 0.1)
-        input_values['popularity'] = st.sidebar.slider("Popularity", 0.0, 100.0, 50.0)
+        input_values['acousticness'] = st.sidebar.slider("Acousticness", 0.0, 1.0, 0.2)
         input_values['instrumentalness'] = st.sidebar.slider("Instrumentalness", 0.0, 1.0, 0.0)
         input_values['liveness'] = st.sidebar.slider("Liveness", 0.0, 1.0, 0.2)
+        input_values['tempo'] = st.sidebar.slider("Tempo", 50.0, 250.0, 120.0)
+        input_values['popularity'] = st.sidebar.slider("Popularity", 0.0, 100.0, 50.0)
     else:  # regression
         input_values['duration_ms'] = st.sidebar.slider("Duration (ms)", 30000, 600000, 210000)
         input_values['danceability'] = st.sidebar.slider("Danceability", 0.0, 1.0, 0.6)
@@ -164,6 +165,7 @@ if input_mode == "Posamezen vzorec (drsniki)":
         input_values['acousticness'] = st.sidebar.slider("Acousticness", 0.0, 1.0, 0.2)
         input_values['instrumentalness'] = st.sidebar.slider("Instrumentalness", 0.0, 1.0, 0.0)
         input_values['liveness'] = st.sidebar.slider("Liveness", 0.0, 1.0, 0.2)
+        input_values['valence'] = st.sidebar.slider("Valence", 0.0, 1.0, 0.5)
         input_values['tempo'] = st.sidebar.slider("Tempo", 50.0, 250.0, 120.0)
 
         # Kategorične spremenljivke
@@ -174,13 +176,14 @@ if input_mode == "Posamezen vzorec (drsniki)":
     # Priprava podatkov
     input_df = pd.DataFrame([input_values])
 
-    # One-hot encoding za regresijo
-    if model_type == 'regression':
-        input_df = pd.get_dummies(input_df, columns=['track_genre', 'key'], drop_first=True)
+    # One-hot encoding
+    cat_cols = [c for c in ['track_genre', 'key'] if c in input_df.columns]
+    if cat_cols:
+        input_df = pd.get_dummies(input_df, columns=cat_cols, drop_first=True)
 
-        # Dodaj manjkajoče stolpce z reindex (optimizirano)
-        expected_cols = scaler.feature_names_in_
-        input_df = input_df.reindex(columns=expected_cols, fill_value=0)
+    # Vedno uporabi reindex glede na to, kaj scaler pričakuje
+    expected_cols = getattr(scaler, 'feature_names_in_', input_df.columns)
+    input_df = input_df.reindex(columns=expected_cols, fill_value=0)
 
     # Skaliranje
     input_scaled = pd.DataFrame(scaler.transform(input_df), columns=input_df.columns)
@@ -247,11 +250,12 @@ if input_mode == "Posamezen vzorec (drsniki)":
             temp_values[sim_feature] = val
             temp_df = pd.DataFrame([temp_values])
 
-            # One-hot encoding za regresijo
-            if model_type == 'regression':
-                temp_df = pd.get_dummies(temp_df, columns=['track_genre', 'key'], drop_first=True)
-                # Uporabi reindex namesto zanke (optimizirano)
-                temp_df = temp_df.reindex(columns=expected_cols, fill_value=0)
+            # One-hot encoding
+            if cat_cols:
+                temp_df = pd.get_dummies(temp_df, columns=cat_cols, drop_first=True)
+            
+            # Reindex
+            temp_df = temp_df.reindex(columns=expected_cols, fill_value=0)
 
             temp_scaled = pd.DataFrame(scaler.transform(temp_df), columns=temp_df.columns)
 
@@ -315,14 +319,16 @@ else:
             if missing_cols:
                 st.error(f"❌ Manjkajoči stolpci: {', '.join(missing_cols)}")
             else:
-                # One-hot encoding za regresijo
-                if model_type == 'regression':
-                    df_batch_encoded = pd.get_dummies(df_batch, columns=['track_genre', 'key'], drop_first=True)
-                    expected_cols = scaler.feature_names_in_
-                    # Uporabi reindex namesto zanke (optimizirano)
-                    df_batch_encoded = df_batch_encoded.reindex(columns=expected_cols, fill_value=0)
+                # One-hot encoding če sta stolpca prisotna
+                cat_cols_batch = [c for c in ['track_genre', 'key'] if c in df_batch.columns]
+                if cat_cols_batch:
+                    df_batch_encoded = pd.get_dummies(df_batch, columns=cat_cols_batch, drop_first=True)
                 else:
                     df_batch_encoded = df_batch[required_cols]
+
+                # Vedno uporabi reindex glede na to, kaj scaler pričakuje
+                expected_cols_batch = getattr(scaler, 'feature_names_in_', df_batch_encoded.columns)
+                df_batch_encoded = df_batch_encoded.reindex(columns=expected_cols_batch, fill_value=0)
 
                 batch_scaled = pd.DataFrame(scaler.transform(df_batch_encoded), columns=df_batch_encoded.columns)
 
